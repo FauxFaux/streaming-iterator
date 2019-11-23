@@ -213,9 +213,11 @@ pub trait StreamingIterator {
         loop {
             self.advance();
             match self.get() {
-                Some(i) => if f(i) {
-                    break;
-                },
+                Some(i) => {
+                    if f(i) {
+                        break;
+                    }
+                }
                 None => break,
             }
         }
@@ -522,7 +524,10 @@ pub fn convert<I>(it: I) -> Convert<I::IntoIter>
 where
     I: IntoIterator,
 {
-    Convert { it: it.into_iter(), item: None }
+    Convert {
+        it: it.into_iter(),
+        item: None,
+    }
 }
 
 /// Turns an iterator of references into a streaming iterator.
@@ -964,10 +969,12 @@ where
     fn advance(&mut self) {
         loop {
             match self.it.next() {
-                Some(i) => if let Some(i) = (self.f)(i) {
-                    self.item = Some(i);
-                    break;
-                },
+                Some(i) => {
+                    if let Some(i) = (self.f)(i) {
+                        self.item = Some(i);
+                        break;
+                    }
+                }
                 None => {
                     self.item = None;
                     break;
@@ -1009,10 +1016,12 @@ where
     fn advance_back(&mut self) {
         loop {
             match self.it.next_back() {
-                Some(i) => if let Some(i) = (self.f)(i) {
-                    self.item = Some(i);
-                    break;
-                },
+                Some(i) => {
+                    if let Some(i) = (self.f)(i) {
+                        self.item = Some(i);
+                        break;
+                    }
+                }
                 None => {
                     self.item = None;
                     break;
@@ -1688,12 +1697,14 @@ where
             None
         } else {
             match self.it.next() {
-                Some(i) => if (self.f)(i) {
-                    Some(i)
-                } else {
-                    self.done = true;
-                    None
-                },
+                Some(i) => {
+                    if (self.f)(i) {
+                        Some(i)
+                    } else {
+                        self.done = true;
+                        None
+                    }
+                }
                 None => None,
             }
         }
